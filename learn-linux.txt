@@ -1,0 +1,587 @@
+BECOME A LINUX POWER USER
+
+CHAPTER 3 - USING THE SHELL
+	$ : regular user
+	# : root user
+
+Using virtual consoles
+	Ctrl + Alt + F1..F6 : switch between virtual consoles (tty)
+
+CHOSSING YOUR SHELL
+	$ whoami : shows your user name
+	$ grep username /etc/passwd : shows the definition of your user account in /etc/passwd
+
+RUNNING COMMANDS
+	$ date : display current date
+	$ pwd : stands for 'print working directory', shows your curreent directory
+	$ hostname : shows your computer's hostname
+	$ ls : lists the files and directories in your current directory
+
+Understanding command syntax
+	--help : option use in commands to see the options and arguments that they support
+	$ cat /etc/passwd : display the content of /etc/passwd
+	$ ls --hide=Desktop : --hide option tells the ls not display the file or directory named Desktop
+	$ tar -cvf backup.tar /home/username : create(c) a file(f) show verbose (v) messages
+	$ uname :
+	$ uname -a :
+	$ date +'%d/%m/%y' : prints date in format dd/mm/yy
+	$ date +'%A, %d, %Y' : prints full date
+	$ who -uH : show information about your current login session, idle(u) and title(H)
+	$ id : shows your identify in system
+
+Location commands
+	$ /bin/date : you can run commands from the directory /bin
+	PATH variable : a list of directories that are checked for commands you enter
+	$ echo $PATH : show a variable
+	Order shell checks for commands:
+		Aliases -> Shell reserved word -> Function -> Built-in command -> Filesystem command
+	$ type bash : shows the location of command
+	$ type -a ls : shows all command location
+	$ locate chage : search any part of system tha is acessible to you
+
+RECALLING COMMANDS USING COMMAND HISTORY
+	$ history : a list of commands that you have entered before
+	$ history 8 : 8 most recent commands
+	$ !382 : run command number 382 in history list
+
+
+CONNECTING AND EXPANDING COMMANDS
+	Using metacharacters, shell can redirect the input and output of commands to others commands	
+	(|) pipe; (&) ampersand; (;) semicolon; ()) right paranthesis; (() left parenthesis; (<) less than; (>) greather than
+
+Piping between commands
+	(|) pipe connects the output from one command to input to another
+	$ cat /etc/passwd | sort | less : cat list content; sort alphabetically; less page output
+
+Sequential commands
+	(;) semicolons allows type several commands in same line
+	$ date ; troff -me largedocument | lpr ; date
+
+Backgrounds commands
+	(&) ampersand allows to run commands in background, allowing use shell. Don't close shell
+	$ troff -me largedocument | lpr &
+	
+Expanding commands
+	$ vi $(find /home | grep xyzzy) : prints all directories /home; filters all files xyzzy; open all files with vi
+
+Expanding arithmetic expressions
+	$ echo "I am $[2020 - 1957] years old."
+	$ echo "There are $(ls | wc -w) files in this directory."
+
+Expandind variables
+	$ ls -l $BASH : dollar sign can expanding environment variables
+
+
+USING SHELL VARIABLES
+	$ set : show all variables current shell
+	$ env : show environment variables that area exported to any shells opened
+	$ declare : show a list of current environment variables and a list of shell functions 
+	$ echo $SHELL : identifies the shell
+	$ echo $PS1 : define shell prompt
+	$ echo $MAIL : location user's mailbox
+
+Creating and using aliases
+	$ alias : show a list of shortcut
+	$ unalias name : remove alias from list
+	$ alias p='pwd ; ls -CF'
+	$ alias rm-'rm -i'
+	You can put your aliases in .bashrc file to make definitive
+
+Exiting shell
+	$ exit
+	Type Ctrl + D
+
+
+CREATING YOUR SHELL ENVIRONMENT
+Configuring your shell
+	/etc/profile : set up environment information for every user
+	/etc/bashrc : execute for every user who runs bash shell each time he is opened
+	~/.bash_profile : used by each user
+	~/.bashrc : contains information especific to user bash shell
+	~/.bash_logout : executes each time you log out
+
+Setting your prompt
+	You can use special characters to change information in your prompt terminal
+	Find more information in bash man page in PROMPT section
+	Change PS1 variable to change the prompt
+	Type export PS1="..." to see temporarily changes in shell prompt
+	To make permanent change add PS1 to your .bashrc file in your home directory
+	Find more information in http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO	
+	Prompt Redhat : ([\u@\h \W] \$ )
+	Restore .bashrc : /etc/skel/.bashrc
+	
+Adding environment variables
+	Adding a few environment variables to your .bashrc help make working more efficient
+	TMOUT=30 : sets how long shell can be inactive without receiving input. Time in seconds
+	PATH : You can add a directory of commands that you use in PATH variable put in .bashrc
+		PATH=$PATH:/getstuff/bin ; export PATH
+	You can create a variable to provide shortcuts
+		M=/work/time/files/info/memos ; export M
+		cd $M; mkdir %M/new_directory; vi $M/new_file
+
+
+GETTING INFORMATION ABOUT COMMANDS
+	echo $PATH : list of directories containing commands
+	$ ls /bin : you can see a list of commands
+	$ help | less : shows built-in commands that not appear in a directory
+	Use --help with comand
+	Use info command
+	Use man command
+	$ man -k passwd : show summary command passwd
+	$ man 5 passwd : show section 5 of command passwd
+	Use / and type a term to search in man pages
+
+
+CHAPTER 4 - MOVING AROUND FILE SYSTEM
+
+USING BASICS FILESYSTEM COMMANDS
+	cd : change to another directory
+	pwd : prints the name of current working directory
+	mkdir : creates a directory
+	chmod : change the permission on a file or directory
+	ls : lists the content of a directory
+	$ cd ~ : go to your home directory
+	$ cd : go to your home directory
+	$ cd .. : go to directory above the current directory
+	$ cd / : go to root directory
+	$ pwd : show your current directory
+	$ mkdir test : creates a new directory call test
+	$ ls -ld test : check the permission of the directory
+	$ ls -la test : show the content of the directory, with ocult(.) files or directories
+	
+
+USING METACHARACTERS AND OPERATORS
+	Help you match one or more files without completely typing each filename
+
+Using file-matching metacharacters
+	* : matches any number of characters
+	? : matches any one character
+	[...] : matches any one characters between brackets
+	[... - ...] : matches range between characters
+	$ ls a* : matches begin with a 
+	$ ls *a : matches ending with a 
+	$ ls a*b : begin with a and ending with e
+	$ ls *a* : contains a 
+	$ ls ????e : matches any five characters that ends in e
+	$ ls g???e* : matches begins with g and has e in fifth character
+	$ ls [abw]* : begins with a, b or w
+	$ ls [agw]*[ne] : begins with a, g or w and ending with n or e 
+	$ ls [a-g]* : begins from a through g are matched
+
+Using file-redirection
+	< : send content of a file to command. This is default action in commands
+		cat < file ==  cat file
+	> : directs output command to a file. If file exist the content is overwritten
+		cat < file01 > file02 == cat file01 > file02
+	2> : directs erro message to a file. If file exist the content is overwritten
+		cat test/ 2> error-file
+	&> : directs error message and output to file. If exists, is overwritten
+		cat test/ &> file
+	>> : directs output to a file, adding in the end
+		cat file01 >> file03
+		cat file02 >> file03
+
+Using brace expansion characters
+	touch file{1,2,3,4,5} : can create various files
+	touch directory{1,2,3,4,5} : can create various directories
+	touch file{a..f} : can use with range
+	touch {a..f}{1..5} : result a1, a2, a3...f1, f2, f3
+	
+
+LISTING FILES AND DIRECTORIES
+	$ ls : show files and directories
+	$ ls -la : show files and directories in long list(l) and ocult(a)
+		-rwsrwxrwxt+
+		s : Reffered a running process x aplication user
+		t : in the end of directory indicates the directory owner can allow other add files
+		+ : indicates extends attributes
+
+Identifying directories
+	$ ~username : represents other user directory
+	Single dot(.) : represents current directory
+	Double dot(..) : represents parent directory
+	$PWD : current directory
+	$OLDPWD : previous working directory before you changed to the current directory
+	$ ls -a : list all directories
+	$ ls -at : list all files by time most recent modified
+	$ ls -F : list files and append file-type indicators
+	$ ls --hide=g* : excludes any files beginning with g	
+	$ ls --hide=*g : exludes files ending with g
+	$ ls -ld directory : show info about directory
+	$ ls -R : list all files and directories recursively
+	$ ls -S : list by size
+
+
+UNDERSTANDING FILE PERMISSIONS AND OWNERSHIP
+	-rwxrwxrwx : 9 bits define who can read(r), write(w) and executable(x) a file
+	(-)regular file; (d)directory; (l)simbolic link; (b)block device; (c)character devive; (s)socket; (p)named pipe
+	
+	type	owner	group	all
+	- 	rwx	rwx	rwx
+		3bits	3bits	3bits
+	
+	If a dash appears instead of a letter the permissions is off, -r-xr--------
+
+Changing permissions with chmod (numbers)
+	chmod rwx  == chmod 777 file/directory
+	r = 4; w = 2; x = 1 : sum numbers for obtain permissions
+	
+	chmod	7	7	7	file		
+		owner	group	all	
+	
+	$ chmod -R 775 $HOME/myapps : aplly permissions recursively
+
+Changing permissions with chmod (letters)
+	On permission using (+), off permission using (-)
+	user (u)
+	group (g)
+	all (a)
+	other (o)
+	$ chmod a-w file : for all remove write -  r-xr-xr-x
+	$ chmod o-x file : for other remove executable - rwxrwxrw-
+	$ chmod go-rwx file: for group and other remove rwx - rwx------
+	$ chmod u+rw file : for user apply rw - rw-------
+	$ chmod a+x file : for all apply x - --x--x--x
+	$ chmod ug+rx file : for user and group apply rx - r-xr-x---
+	$ chmod -R o-w $HOME/myapps : for others remove w recursively
+
+Setting default file permission with umask
+	Used for set default permission on create a file or directory
+	$ umask
+	$ umask 777 ; touch file01; mkdir dir01 : results file01 ----------, dir01 d---------
+	$ umask 000 ; touch file01; mkdir dir01 : results file01 -rwxrwxrwx, dir01 drw-rw-rw-
+	$ umask 022 : touch file01; mkdir dir01 : results file01 -rwxr-xr-x, dir01 drw-r--r--
+	$ umask -S : show simbolic output
+	For change umask permanently add to the .bashrc
+
+Changing file ownership
+	Need to be a root to change
+	# chown username /home/user/file : change only user
+	# chown username:group /home/user/file : change user and group
+	# chown -R username:group /home/user/file : change recursively both
+
+
+MOVING, COPYING AND REMOVING FILES
+	$ mv -i : prompt before overwriting a existing file
+	You can create a alias mv='mv -i' in .bashrc
+	$ mv -b : create a backup file in destination, if the file already exist
+	
+	$ cp abc def : copies abc to new name def
+	$ cp abc ~ : copies abc to home directory
+	$ cp -r /usr/share/doc/bash-completion* /tmp/a : copies the directory and all files it contains
+	$ cp -ra : maintained date/time stamps and permissions
+	$ cp -i : prompt before copy
+	$ rsync --progress source destination : show progress of copies. sometimes need to be instaled 
+
+	$ rm file : remove the file
+	$ rm * : remove all file of directory
+	$ rm -r : remove directory not empty
+	$ rmdir : remove empty directory
+	$ rm -rf : remove without prompt
+	$ rm -ri : prompt before remove
+	
+
+CHAPTER 5 - WORKING WITH TEXT FILES
+	$ find : you can search for files based in you attributes (filename, size, modification date, ownership)
+	$ grep : can search inside the text files to search terms
+	
+
+EDITING FILES WITH VIM AND VI	
+
+Starting with vi
+	$ vi /tmp/test
+	vi always start in commando mode
+	(:) : ex mode
+
+Adding text
+	Esc key : return command mode
+	All keys must be used in command mode
+	a key : insert text (add command)
+	A key : add at end command
+	i key : insert to the left
+	I key : insert begining of line
+	o key : insert below current line
+	O key : insert above current line
+
+Moving around in the text
+	All keys must be used in command mode
+	h key : go to left
+	l key : go to right
+	j key : go to down
+	k key : go to up
+	w key : move cursor to beginning next word
+	W key : move to next word
+	b key : move to previous word 
+	B key : move to previous word
+	0 (zero) key : go to beginning current line
+	$ key : go to end of line
+	H key : move to upper left corner of screen
+	M key : move to middle of screen
+	L key : move to lower left corner of screen
+
+Deleting, copying and changing text
+	All keys must be used in command mode
+	x key : delete character under cursor
+	X key : delete character before cursor
+	d<?> : delete some text
+		dw : delete after current cursor position
+		db : delete before current cursor position
+		dd : delete entire line
+	c<?> : change some text
+		c$ : delete line and go to input mode
+		c0 : delete left character and go to input mode
+		cl : delete current letter and go to input mode
+		cc : delete line and go to input mode
+	y<?> : (yanks) copies some text
+		yy : copies line into buffer
+		y) : copies current sentence to the right of cursor
+		y} : copies current paragraph to the right of cursor
+	Can use numbers to modified the commands
+	3dd : delete 3 lines
+	3dw : delte 3 next words
+	12j : move down 12 lines
+	5cw : erase 5 next words and go to input mode
+	4y) : copies next four words
+
+Pasting (putthing) text
+ 	After text has been copied to the buffer (by deleting, changing or yanking) can use p or P
+	P : puts text copied to the left of cursor if only letters or words and above if a copy is a line
+	p : same as P but put the text copied in right
+
+Repeating commands
+	Can repeat the action typing a period (.)
+
+Exiting vi
+	ZZ : saves and exit
+	:w : saves and continue editing
+	:wq : saves and exit
+	:q : exit if dont have changes
+	:q! : exit without saving , force quit
+	u : undo changes
+	Ctrl + R : redo changes
+	:!<command> : can use shell commands
+	Ctrl + g : show info about file
+
+Skipping around in the file
+	Ctrl + f : ahead one page
+	Ctrl + b : back one page
+	Ctrl + d : ahead one-half page
+	Ctrl + u : back one-half page
+	G : goes to the last line
+	1G : goes to the first line
+	35G : goes to line 35
+
+Searching for text
+	/<text> : searches forward for text
+	?<text> : searches backward for text
+	/The.*foot : searches forward for a line that has The and foot
+	?[pP]rint : searches backward for print or Print
+	n or N : navigate in searched term
+
+Using ex mode
+	When you type colon in command mode you are in ex mode
+	:g/<Local> : search for Local and print all line that exists the word
+	:s/<Local>/<Remote> : change Local for Remote in first ocurrence
+	:g/Local/s//Remote : change the first ocurrence Local in every line for Remote
+	:g/Local/s//Remote/g : change every ocurrence of Local for Remote
+	:g/Local/s//Remote/gp :change every ocurrence of Local for Remote and print each line changed
+
+Learning more about vi and vim
+	Type vimtutor in console it opens a tutorial in th vim editor
+
+
+FINDING FILES
+	locate : find commands by name
+	find : find files based on a lots of attributes
+	grep : search in files text
+
+Using locate to find files by name
+	Locate search for strings in files and directories that contain the string text
+	Locate is faster because it searches a database instead a whole filesystem
+	If a command is not find need to update database with the command updatedb
+	/etc/updatedb.conf : prune paths from the locate command
+	$ locate .bashrc : finds only in user
+	# locate .bashrc : finds in all users
+	$ locate -i dir_color : finds all ocurrencies, case sensitive
+	
+Searching for files with find
+	Find use attributes to find files
+	You can limited the area of search
+	$ find : find all files and directories below the current directory
+	$ find /etc : finds below /etc. Show some errors permission
+	# find /etc : as su without errors permission
+	$ find $HOME -ls : list files
+	$ find /etc 2> /dev/null : when you direct the output for /dev/null, the erros is removed from list
+	
+Finding files by name
+	# find /etc -name passwd : show only matchs passwd
+	# find /etc -iname '*passwd*' : show all ocurrencies passwd, lower and upercase and if contains passwd
+	
+Finding files by size
+	$ find /usr/share -size +10M : larger than 10MB
+	$ find /usr/share -size -1M : less than 1MB
+	$ find /usr/share -size +500M -size -5G : between 500MB and 5GB
+
+Finding files by user
+	$ find /home -user chris -ls : find all files that owner is chris
+	$ find /home \(-user chris -or -user joe\) -ls : all files user chris or joe
+	$ find /etc -group ntp -ls : find all files that group is ntp
+	$ find /var/spool -not -user root -ls : all files that owner is not root
+
+Finding files by permission
+	$ find /usr/bin -perm 755 -ls : exactly 755 permission
+	$ find /home/chris/ -perm -222 -type d -ls : only directories with write(2) permission
+	$ find /home/chris -perm /222 -type f -ls : files that have write permission turn on for user, group or other
+	$ find . -perm -002 -type f -ls : files that have on write permission for other, regardless other permission bit are set
+
+Finding files by date
+	$ find /etc -mmin -10 : show what changed in past 10 min
+	$ find /bin /usr/bin /sbin /usr/sbin -ctime -3 : show changes in past 3 days
+	$ find /var/ftp /var/web -atime +300 : show any change in more than 300 days
+	-atime, -ctime, -mtime is in days
+	-amin, -cmin, -mmin is in minutes
+	In arguments numbers:
+		+300 : + indicates a time from the number of minnutes or days ago and older
+		-300 : - indicates a time from the current time to that number in minutes or days ago
+		() : indicates the exact number
+
+Using 'not' or 'or' when finding files
+	$ find /var/allusers \(-user joe -or -user chris\) -ls : find files owned by joe or chris
+	$ find /var/allusers -user joe -not -group joe -ls : files ownde by joe but not from group joe
+	$ find /var/allusers -user joe -and -size +1M -ls : ownder by joe and greater than 1MB
+
+Finding files and executing commands
+	$ find [options] -exec <command> {} \; : The command is executed in each file found
+	$ find [options] -ok <command> {} \; : prompt in each file found before exec command
+	$ find /etc -iname passwd -exec echo "I found {}"\;
+	$ find /usr/share -size +5M -exec du {} \; | sort -nr
+	$ find /var/allusers -user joe -ok mv {} /tmp/joe \;
+
+Searching in files with grep
+	$ grep desktop /etc/services : searches for desktop or Desktop word in /etc/services file
+	$ grep -i desktop /etc/services : (-i) case-insentive
+	$ grep -vi tcp /etc/services : show all lines, except those containing the word tcp
+	$ grep -rli peerdns /usr/share/doc : recursive(-r) search in directory, (-l) only show the filesthat includes the word.
+	$ grep -ri --color root /etc/sysconfig : show the word in red
+	$ ip addr show | grep inet : search the output of a command piped in grep
+
+
+CHAPTER 6 : MANAGING RUNNING PROCESSES
+
+Listing processes with ps
+	$ ps -u
+	STAT : represents state of processes
+		S : sleeping process
+		R : running process
+		+ : indicates that process is associated with foreground operations
+	USER : who started process
+	VSZ (virtual set size) : size of image process. Amount of memory allocated for the process
+	RSS (resident set size) : size program in memory. Amount of memory being used
+	START : time that process began running
+	TIME : cumulative system time used
+	$ ps -ux | less : shows all process for current user
+	$ ps -aux | less : shows all process for all users
+	$ ps -eo pid,user,group | less : shows every(-e) running process with the choosed option(-o) of columns
+	$ ps -eo pid,user,group,vsz --sort=-vsz | head : shows sorted by vsz
+		(-) : hightest to lower
+		(+) : lower to hightest
+		head : shows only the first 9 line
+
+Listing and changing process with top
+	$ top : can kill or change only users process
+	# top : can kill or change all users process
+	h key : shows help options
+	M key : sort by memory usage
+	P key : sort by cpu usage
+	R key : reverse sorted process
+	1 key : shows all cpus usage
+	u key : shows only user process (u key + username + enter)
+
+Renicing process
+	Take a note PID, press r key, enter the PID number, enter priority number (-20 to 19)
+killing process
+	Take a note PID, press k key, enter the PID number, enter 15 to terminate cleanly or 9 to kill outright
+
+
+MANAGING BACKGROUND AND FOREGROUND PROCESSES
+
+Starting background process
+	Backgrounds process means put any program to run while continue to work in shell
+	Use ampersand (&) in the final of any command for put it in background
+	$ find /usr > /tmp/allusers & : find all /usr directories and put in file alluserfiles
+	$ jobs : shows wich program are in background
+		(+) : most recent program in background
+		(-) : place in background before most recente program
+	$ jobs -l : shows PID for background job
+	Ctrl + z : stop running and put in background
+	$ fg + process name : put in foreground
+	$ bg command : put in background again
+	Ctrl + l : redraw vi screen
+
+Using foreground and background commands
+	Tip : before put the program in background save it
+	$ fg %1 : put job in foreground again
+	% : bring the most recent program in background to foreground
+	%string : string must be unambiguous
+	%?string : contains the string in any point of program name
+	%-- : job stopped before the one most recent
+	%number : use job number to bring program back to foreground
+	If a is in background, use $ bg %jobnumber to change the priority in jobs
+
+
+KILLING AND RENICING PROCESSES
+
+Killing  process with kill and killall
+	SIGKILL (9) : kill a process immediately
+	SIGTERMS (15) : try to terminate a process cleanly
+	SIGHUP (1) : dependig of the program, reread its configuration files
+	SIGSTOP : pauses a process
+	SIGCONT	: continues a stopped process
+	
+Using kill to signal processes by PID
+	$ kill 10432 : kill process like SIGTERM(15)
+	$ kill -15 10432 : same as above
+	$ kill -SIGKILL 10432 : kill immediatly a process
+	$ kill -1 1833 : reread configuration files
+	$ kill -HUP gnome-shell : reread gnome-shel configuration files
+
+Using killall to signal processes by name
+	Killall uses SIGTERM(15) as a defaul signal
+	Killall is usefull if you want to kill a bunch of commands in same time
+	$ killall -9 testme : kill process imediately
+
+
+SETTING PROCESSOR PRIORITY WITH NICE AND RENICE
+	Give a process more or less access to cpu priority
+	You can see the priority in NI column in top command
+	Priority is set from -20 to 19
+	Most lower the value more access to cpu
+	Root can set all values in all processes
+	User can set only 0 to 19 values
+	User can set only values higher than default value
+	User can set only in your processes
+	
+	$ nice -n +5 updatedb & : create a process in background(&), with the nice value set in 5
+	# renice -n -5 20284 : set priority to -5 in nice value for the process 20284
+
+
+LIMITING PROCESSES WITH CGROUPS
+	Cgroups can be used to identify a process as a task
+	With cgroups can be limited resources in a server
+	STORAGE (blkio) : limits total input/output
+	PROCESSOR SCHEDULING (cpu) : assigns the amount of access
+	PROCESS ACCOUNTING (cpuacct) : reports cpu usage
+	CPU ASSIGNMENT (cpuset) : assigns a task to a particular set of processors and associated memory 
+	DEVICE ACCESS (devices) : to open or create (mknod)
+	SUSPEND/RESUME (freezer) : suspends or resumes cgroup tasks
+	MEMORY USAGE (memory) : limit memory usage by tasks
+	NETWORK BANDWITH (net_cls) : limits a network access to a cgroups tasks
+	NETWORK TRAFFIC (net_prio) : set priorites of network traffic comming from selected cgroups
+	NAME SPACES (ns) : separates cgroups in namespaces
+	
+	Create your own cgrous : /etc/cgconfig.conf
+	Set limits for users or cgroups : /etc/cgrules.conf
+	$ cgcreates : creates cgroups, add in /sys/fs/cgroup
+	
+	
+		
