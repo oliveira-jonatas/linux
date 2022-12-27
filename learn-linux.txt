@@ -582,6 +582,76 @@ LIMITING PROCESSES WITH CGROUPS
 	Create your own cgrous : /etc/cgconfig.conf
 	Set limits for users or cgroups : /etc/cgrules.conf
 	$ cgcreates : creates cgroups, add in /sys/fs/cgroup
+
+
+CHAPTER 7 - WRITING SIMPLE SHELL SCRIPTS
+
+UNDERSTANDING SHELL SCRIPTS
+
+Executing and debugging shell scripts
+	Put #!/bin/bash in first line of file indicates that file is a script		
+	$ bash myscript : execute shell script as an argument
+	Put the file in path, allows script be executed as a command : /home/user/bin/myscript
+	$ chmod +x myscript : allows execute shell script
+	echo command in begging of each line shows every line executed
+	$ bash -x myscript : shows every line executed
+
+Understanding shell variables
+	$ VARIABLENAME=value
+	$ CITY="Springfield" : string variable
+	$ PI=3.14 : number variable
+	MYDATE=$(date) : put command or a command sequence in a variable
+	MYDATE=`date` : put commands inside back-tick 
+	
+
+SCAPING SPECIAL SHELL CHARACTERS
+	$ $VARIABLE : indicates a variable
+	$ echo $HOME : shows home directory
+	$ echo '$HOME' : shows $HOME string
+	$ echo \$HOME : shows $HOME string
+	$ MACHINE=`uname -n` : shows OS name
+	$ NUM_FILES=$(/bin/ls | wc -l) : shows the number of directories or files in /bin/ls
+	$ BALANCE="$CurBalance"
+
+Special shell positional parameters
+	$0 : shows script name or path
+	$1, $2, $3, .., $n : store arguments
+	$H : arguments quantity
+	$@ : shows all arguments
+	$? : receives the status of last command executed. 0 is ok.
+		#!/bin/bash
+		# Script to echo out command-line arguments
+		echo "The first argument is $1, the second is $2."
+		echo "The command itself is called $0."
+		echo "There are $# parameters on your command line"
+		echo "Here are all the arguments: $@"
+
+Reading in parameters
+	$ read -p "input your name" name
+		$ echo $name
+
+Parameter expansion in bash
+	Some common constructors
+	${var:-value} : if variable is unset or empty -value is put in place
+	${var#pattern} :
+	MYFILE=/home/user/file.txt
+	FILE=${MYFILE##*/} : file.txt
+	DIR=${MYFILE%/*} : /home/user
+	NAME=${FILE%.*} : file
+	EXTENSION=${FILE##*.} : txt
+
+Performing arithmetic in shell scripts
+	BIGNUM=1024
+	let RESULT=$BIGNUM/16
+	expr $BIGNUM/16
+	echo $BIGNUM/16 | bc
+	NUMBER=5
+	echo $((NUMBER++)) : increment
+	echo $((NUMBER--)) : decrement
+	
+	$ help let : to see others arithmetic options
+
+
 	
 	
 		
